@@ -5,15 +5,15 @@ import { HttpError } from "../utils/error.js";
 export async function createUser(req: Request, res: Response) {
   const { name, email, phoneNumber, password } = req.body;
   const user = await userService.createUser(name, email, phoneNumber, password);
-  res.json({
+  res.status(201).json({
     essage: "User created successfully",
     data: user,
   });
 }
 
-export function    getCurrentUser(_req: Request, res: Response) {
+export function getCurrentUser(_req: Request, res: Response) {
   const user = res.locals.user;
-  res.json({
+  res.status(200).json({
     message: "Success found user",
     data: user,
   });
@@ -29,7 +29,7 @@ export async function updateCurrentUser(req: Request, res: Response) {
     image,
   });
 
-  res.json({
+  res.status(200).json({
     message: "Profile updated successfully",
     data: updated,
   });

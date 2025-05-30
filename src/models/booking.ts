@@ -61,3 +61,42 @@ export async function getBookingsByUserId(userId: string) {
 
   return res.rows;
 }
+
+export async function getBookingDetailById(id: string) {
+  const res = await query(
+    `
+    SELECT 
+      b.id, b.date, b.status, b.created_at,
+      json_build_object(
+        'name', u.name,
+        'phone_number', u.phone_number
+      ) AS user,
+      json_build_object(
+        'title', d.title,
+        'base_price', d.base_price
+      ) AS decoration
+    FROM bookings b
+    JOIN users u ON u.id = b.user_id
+    JOIN decorations d ON d.id = b.decoration_id
+    WHERE b.id = $1
+  `,
+    [id]
+  );
+
+  return res.rows[0];
+}
+
+export async function getBookingAddons(bookingId: string) {
+  const res = await query(
+    `
+    SELECT 
+      s.name, s.price, s.unit, bas.quantity
+    FROM booking_additional_services bas
+    JOIN additional_services s ON s.id = bas.additional_service_id
+    WHERE bas.booking_id = $1
+  `,
+    [bookingId]
+  );
+
+  return res.rows;
+}

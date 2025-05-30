@@ -3,5 +3,5 @@ import * as serviceService from "../services/additionalService";
 
 export async function getAllServices(req: Request, res: Response) {
   const data = await serviceService.getAll();
-  res.json({ data });
+  res.status(200).json({ data });
 }

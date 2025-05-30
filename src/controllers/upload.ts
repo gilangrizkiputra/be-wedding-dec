@@ -34,7 +34,7 @@ export async function uploadImage(req: Request, res: Response) {
 
   const url = `${appEnv.SUPABASE_URL}/storage/v1/object/public/uploads/${path}`;
 
-  res.json({
+  res.status(200).json({
     message: "Upload success",
     url,
   });

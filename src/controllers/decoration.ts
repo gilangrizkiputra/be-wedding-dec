@@ -3,7 +3,7 @@ import * as decorationService from "../services/decoration";
 
 export async function getAllDecorations(_req: Request, res: Response) {
   const decorations = await decorationService.getAll();
-  res.json({
+  res.status(200).json({
     data: decorations,
   });
 }
@@ -11,5 +11,5 @@ export async function getAllDecorations(_req: Request, res: Response) {
 export async function getDecorationById(req: Request, res: Response) {
   const id = req.params.id;
   const data = await decorationService.getByIdWithProjects(id);
-  res.json({ data });
+  res.status(200).json({ data });
 }
