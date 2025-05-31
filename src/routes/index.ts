@@ -6,6 +6,7 @@ import uploads from "./uploads.js";
 import decoration from "./decoration.js";
 import additionalService from "./additionalService.js";
 import booking from "./booking.js";
+import midtrans from "./midtrans.js";
 
 export default (app: Application) => {
   const router = Router();
@@ -18,4 +19,5 @@ export default (app: Application) => {
   decoration(app);
   additionalService(app);
   booking(app);
+  midtrans(app);
 };

@@ -65,4 +65,29 @@ INSERT INTO additional_services (name, price, unit, created_at, updated_at) VALU
 
 -- DELETE FROM decorations;
 
-SELECT * FROM decorations
+SELECT * FROM payments;
+
+SELECT * FROM bookings;
+
+DELETE FROM bookings;
+
+DELETE FROM payments;
+
+DELETE FROM booking_additional_services;
+
+
+-- update tanggal booking untuk h-20
+UPDATE bookings
+SET date = NOW() + INTERVAL '20 days'
+WHERE id = '19ec3495-de8e-41b5-ba88-a88a16cfc55f';
+
+-- update tanggal booking untuk h-5
+UPDATE bookings
+SET date = NOW() + INTERVAL '5 days'
+WHERE id = '19ec3495-de8e-41b5-ba88-a88a16cfc55f';
+
+UPDATE bookings
+SET date = '2025-08-30'
+WHERE id = '19ec3495-de8e-41b5-ba88-a88a16cfc55f';
+
+

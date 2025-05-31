@@ -26,9 +26,22 @@ export function calculatePaymentBreakdown(
   };
 }
 
-export function determineAvailablePayments(daysBefore: number): string[] {
-  const available: string[] = ["dp"];
-  if (daysBefore <= 30) available.push("first");
-  if (daysBefore <= 7) available.push("final");
+export function determineAvailablePayments(
+  daysBefore: number,
+  paid: string[]
+): string[] {
+  const available: string[] = [];
+
+  if (paid.includes("dp")) {
+    if (!paid.includes("first") && daysBefore <= 30) {
+      available.push("first");
+    }
+    if (!paid.includes("final") && daysBefore <= 7) {
+      available.push("final");
+    }
+  } else {
+    available.push("dp");
+  }
+
   return available;
 }

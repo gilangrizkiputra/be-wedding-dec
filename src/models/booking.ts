@@ -83,7 +83,20 @@ export async function getBookingDetailById(id: string) {
     [id]
   );
 
-  return res.rows[0];
+  const paid = await query(
+    `
+    SELECT type FROM payments
+    WHERE booking_id = $1 AND payment_status = 'paid'
+    `,
+    [id]
+  );
+
+  const paidPayments = paid.rows.map((p) => p.type); // ["dp", "first"]
+
+  return {
+    ...res.rows[0],
+    paid_payments: paidPayments,
+  };
 }
 
 export async function getBookingAddons(bookingId: string) {
@@ -99,4 +112,56 @@ export async function getBookingAddons(bookingId: string) {
   );
 
   return res.rows;
+}
+
+export async function updateBookingStatusAndAmounts({
+  bookingId,
+  type,
+  status,
+  dpAmount,
+  fullAmount,
+}: {
+  bookingId: string;
+  type: "dp" | "first" | "final";
+  status: string;
+  dpAmount?: number;
+  fullAmount?: number;
+}) {
+  const updates: string[] = [`status = $1`];
+  const values: any[] = [status];
+  let index = 2;
+
+  if (type === "dp" && dpAmount != null) {
+    updates.push(`dp_amount = $${index}`);
+    values.push(dpAmount);
+    index++;
+  }
+
+  if (fullAmount != null) {
+    updates.push(`full_amount = $${index}`);
+    values.push(fullAmount);
+    index++;
+  }
+
+  updates.push(`updated_at = NOW()`); // statis
+  const whereClauseIndex = index;
+  values.push(bookingId);
+
+  const sql = `
+    UPDATE bookings
+    SET ${updates.join(", ")}
+    WHERE id = $${whereClauseIndex}
+  `;
+
+  await query(sql, values);
+}
+
+export async function getPaidPaymentTypes(
+  bookingId: string
+): Promise<string[]> {
+  const res = await query(
+    `SELECT type FROM payments WHERE booking_id = $1 AND payment_status = 'paid'`,
+    [bookingId]
+  );
+  return res.rows.map((p) => p.type);
 }
