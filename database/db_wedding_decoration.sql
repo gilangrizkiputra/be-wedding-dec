@@ -109,4 +109,4 @@ DROP TABLE users;
 --   END LOOP;
 -- END $$;
 
--- ALTER TABLE payments ADD COLUMN order_id TEXT;
+ALTER TABLE payments ADD COLUMN order_id TEXT;

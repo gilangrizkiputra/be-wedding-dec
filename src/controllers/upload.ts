@@ -14,7 +14,7 @@ export async function uploadImage(req: Request, res: Response) {
 
   const folder = req.body.folder || "general";
 
-  const allowedFolders = ["users", "decorations", "general"];
+  const allowedFolders = ["users", "decorations", "general", "gallery"];
   if (!allowedFolders.includes(folder)) {
     throw new HttpError("Invalid folder name", 400);
   }

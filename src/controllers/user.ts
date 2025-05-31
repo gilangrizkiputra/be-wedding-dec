@@ -6,7 +6,7 @@ export async function createUser(req: Request, res: Response) {
   const { name, email, phoneNumber, password } = req.body;
   const user = await userService.createUser(name, email, phoneNumber, password);
   res.status(201).json({
-    essage: "User created successfully",
+    message: "User created successfully",
     data: user,
   });
 }
