@@ -84,20 +84,17 @@ export async function updatePaymentFromWebhook(body: any) {
   const current = await modelMidtrans.getPaymentByOrderId(order_id);
   if (!current) return;
 
-  // 🛑 CEGAH PENGULANGAN!
   if (current.payment_status === finalStatus) {
     console.log("🔁 Sudah diproses sebelumnya, skip.");
     return;
   }
 
-  // Step 1: Update payment
   await modelMidtrans.updatePaymentStatusByOrderId(
     order_id,
     finalStatus,
     transaction_id || null
   );
 
-  // Step 2: Persiapkan nilai tambahan
   let dpAmount: number | undefined = undefined;
   let fullAmount: number | undefined = undefined;
 
@@ -111,7 +108,6 @@ export async function updatePaymentFromWebhook(body: any) {
     );
   }
 
-  // Step 3: Update booking
   await modelBooking.updateBookingStatusAndAmounts({
     bookingId: current.booking_id,
     type: current.type,
