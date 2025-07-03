@@ -165,3 +165,50 @@ export async function getPaidPaymentTypes(
   );
   return res.rows.map((p) => p.type);
 }
+
+export async function getDecorationById(decorationId: string) {
+  const res = await query(`SELECT * FROM decorations WHERE id = $1`, [
+    decorationId,
+  ]);
+  return res.rows[0];
+}
+
+export async function cancelBooking(bookingId: string) {
+  const res = await query(
+    `
+    UPDATE bookings
+    SET status = 'cancelled', updated_at = NOW()
+    WHERE id = $1
+    RETURNING *
+  `,
+    [bookingId]
+  );
+
+  return res.rows[0];
+}
+
+export async function getAllBookings() {
+  const res = await query(
+    `
+    SELECT 
+      b.id, b.date, b.status, b.created_at,
+      json_build_object(
+        'id', u.id,
+        'name', u.name,
+        'phone_number', u.phone_number
+      ) AS user,
+      json_build_object(
+        'id', d.id,
+        'title', d.title,
+        'base_price', d.base_price,
+        'category', d.category
+      ) AS decoration
+    FROM bookings b
+    JOIN users u ON u.id = b.user_id
+    JOIN decorations d ON d.id = b.decoration_id
+    ORDER BY b.created_at DESC
+  `
+  );
+
+  return res.rows;
+}

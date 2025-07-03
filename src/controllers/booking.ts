@@ -29,3 +29,19 @@ export async function getDetailBooking(req: Request, res: Response) {
   const data = await bookingService.getDetailBooking(bookingId);
   res.status(200).json({ data });
 }
+
+export async function cancelBooking(req: Request, res: Response) {
+  const bookingId = req.params.id;
+
+  const cancelledBooking = await bookingService.cancelBooking(bookingId);
+
+  res.status(200).json({
+    message: "Booking berhasil dibatalkan.",
+    data: cancelledBooking,
+  });
+}
+
+export async function getAllBookings(req: Request, res: Response) {
+  const data = await bookingService.getAllBookings();
+  res.status(200).json({ data });
+}

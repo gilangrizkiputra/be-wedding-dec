@@ -18,16 +18,44 @@ export default (app: Application) => {
   );
 
   router.post(
-    "/project-decorations",
+    "/admin/project-decorations",
     authMiddleware.isAuthorized,
     authMiddleware.isAdmin,
     projectController.createProjectDecoration
   );
 
+  router.put(
+    "/admin/project-decorations/:id",
+    authMiddleware.isAuthorized,
+    authMiddleware.isAdmin,
+    projectController.updateProjectDecoration
+  );
+
+  router.delete(
+    "/admin/project-decorations/:id",
+    authMiddleware.isAuthorized,
+    authMiddleware.isAdmin,
+    projectController.deleteProjectDecoration
+  );
+
   router.post(
-    "/project-decorations/:id/images",
+    "/admin/project-decorations/:id/images",
     authMiddleware.isAuthorized,
     authMiddleware.isAdmin,
     projectImageController.uploadProjectImages
   );
+
+  router.delete(
+    "/admin/project-images/:id",
+    authMiddleware.isAuthorized,
+    authMiddleware.isAdmin,
+    projectImageController.deleteProjectImage
+  );
+
+  // router.get(
+  //   "/admin/project-images",
+  //   authMiddleware.isAuthorized,
+  //   authMiddleware.isAdmin,
+  //   projectImageController.getAllProjectImages
+  // );
 };

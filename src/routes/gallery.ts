@@ -18,4 +18,18 @@ export default (app: Application) => {
     authMiddleware.isAdmin,
     galleryController.createGalleryDecoration
   );
+
+  router.put(
+    "/admin/gallery-decorations/:id",
+    authMiddleware.isAuthorized,
+    authMiddleware.isAdmin,
+    galleryController.updateGalleryDecoration
+  );
+
+  router.delete(
+    "/admin/gallery-decorations/:id",
+    authMiddleware.isAuthorized,
+    authMiddleware.isAdmin,
+    galleryController.deleteGalleryDecoration
+  );
 };

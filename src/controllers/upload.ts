@@ -14,7 +14,7 @@ export async function uploadImage(req: Request, res: Response) {
 
   const folder = req.body.folder || "general";
 
-  const allowedFolders = ["users", "decorations", "general", "gallery"];
+  const allowedFolders = ["users", "Engagement", "gallery", "Wedding"];
   if (!allowedFolders.includes(folder)) {
     throw new HttpError("Invalid folder name", 400);
   }
@@ -22,7 +22,7 @@ export async function uploadImage(req: Request, res: Response) {
   const path = `${folder}/${filename}`;
 
   const { error } = await supabase.storage
-    .from("uploads")
+    .from("wdstorage")
     .upload(path, req.file.buffer, {
       contentType: req.file.mimetype,
       upsert: true,

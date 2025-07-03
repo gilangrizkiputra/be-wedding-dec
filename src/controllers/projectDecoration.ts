@@ -46,3 +46,47 @@ export async function createProjectDecoration(
     next(err);
   }
 }
+
+export async function updateProjectDecoration(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { id } = req.params;
+    const { title, description } = req.body;
+
+    const data = await projectService.updateProjectDecoration(id, {
+      title,
+      description,
+    });
+    res
+      .status(200)
+      .json({ message: "Project decoration berhasil diupdate", data });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function deleteProjectDecoration(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { id } = req.params;
+
+    const { deletedProject, deletedImages } =
+      await projectService.removeWithImages(id);
+
+    res.status(200).json({
+      message: "Project decoration & images berhasil dihapus",
+      data: {
+        deletedProject,
+        deletedImages,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}

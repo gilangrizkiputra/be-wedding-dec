@@ -24,4 +24,18 @@ export default (app: Application) => {
     authMiddleware.isAuthorized,
     controller.getDetailBooking
   );
+
+  router.get(
+    "admin/booking",
+    authMiddleware.isAuthorized,
+    authMiddleware.isAdmin,
+    controller.getAllBookings
+  );
+
+  router.patch(
+    "/admin/booking/:id/cancel",
+    authMiddleware.isAuthorized,
+    authMiddleware.isAdmin,
+    controller.cancelBooking
+  );
 };

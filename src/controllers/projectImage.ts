@@ -23,3 +23,35 @@ export async function uploadProjectImages(
     next(err);
   }
 }
+
+export async function deleteProjectImage(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { id } = req.params;
+
+    const data = await projectImageService.deleteImage(id);
+
+    res.status(200).json({
+      message: "Project image berhasil dihapus",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getAllProjectImages(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const data = await projectImageService.getAllImages();
+    res.status(200).json({ data });
+  } catch (err) {
+    next(err);
+  }
+}
