@@ -114,5 +114,10 @@ export async function cancelBooking(bookingId: string) {
 
 export async function getAllBookings() {
   const bookings = await modelBooking.getAllBookings();
-  return bookings;
+
+  return bookings.map((b) => ({
+    ...b,
+    addons_total: parseInt(b.addons_total, 10),
+    total_price: parseInt(b.total_price, 10),
+  }));
 }
