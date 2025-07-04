@@ -50,10 +50,15 @@ export async function getBookingsByUserId(userId: string) {
       json_build_object(
         'title', d.title,
         'base_price', d.base_price
-      ) AS decoration
+      ) AS decoration,
+      COALESCE(SUM(s.price * bas.quantity), 0) AS addons_total,
+      (d.base_price + COALESCE(SUM(s.price * bas.quantity), 0)) AS total_price
     FROM bookings b
     JOIN decorations d ON d.id = b.decoration_id
+    LEFT JOIN booking_additional_services bas ON bas.booking_id = b.id
+    LEFT JOIN additional_services s ON s.id = bas.additional_service_id
     WHERE b.user_id = $1
+    GROUP BY b.id, d.title, d.base_price
     ORDER BY b.created_at DESC
   `,
     [userId]
@@ -143,7 +148,7 @@ export async function updateBookingStatusAndAmounts({
     index++;
   }
 
-  updates.push(`updated_at = NOW()`); // statis
+  updates.push(`updated_at = NOW()`);
   const whereClauseIndex = index;
   values.push(bookingId);
 
@@ -202,10 +207,15 @@ export async function getAllBookings() {
         'title', d.title,
         'base_price', d.base_price,
         'category', d.category
-      ) AS decoration
+      ) AS decoration,
+      COALESCE(SUM(s.price * bas.quantity), 0) AS addons_total,
+      (d.base_price + COALESCE(SUM(s.price * bas.quantity), 0)) AS total_price
     FROM bookings b
     JOIN users u ON u.id = b.user_id
     JOIN decorations d ON d.id = b.decoration_id
+    LEFT JOIN booking_additional_services bas ON bas.booking_id = b.id
+    LEFT JOIN additional_services s ON s.id = bas.additional_service_id
+    GROUP BY b.id, u.id, u.name, u.phone_number, d.id, d.title, d.base_price, d.category
     ORDER BY b.created_at DESC
   `
   );
