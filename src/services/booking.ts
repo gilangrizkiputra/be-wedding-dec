@@ -13,24 +13,24 @@ export async function create(
     throw new HttpError("Decoration not fount", 404);
   }
 
-  // const eventDate = new Date(date);
-  // const today = new Date();
-  // const diffTime = eventDate.getTime() - today.getTime();
-  // const diffDays = diffTime / (1000 * 3600 * 24);
+  const eventDate = new Date(date);
+  const today = new Date();
+  const diffTime = eventDate.getTime() - today.getTime();
+  const diffDays = diffTime / (1000 * 3600 * 24);
 
-  // let minDays = 0;
-  // if (decoration.category === "wedding") {
-  //   minDays = 21;
-  // } else if (decoration.category === "engagement") {
-  //   minDays = 5;
-  // }
+  let minDays = 0;
+  if (decoration.category === "wedding") {
+    minDays = 21;
+  } else if (decoration.category === "engagement") {
+    minDays = 5;
+  }
 
-  // if (diffDays < minDays) {
-  //   throw new HttpError(
-  //     `Booking untuk acara ${decoration.category} harus dilakukan minimal ${minDays} hari sebelum tanggal acara.`,
-  //     400
-  //   );
-  // }
+  if (diffDays < minDays) {
+    throw new HttpError(
+      `Booking untuk acara ${decoration.category} harus dilakukan minimal ${minDays} hari sebelum tanggal acara.`,
+      400
+    );
+  }
 
   const booking = await modelBooking.createBooking(userId, decorationId, date);
   await modelBooking.addAdditionalServices(booking.id, services);
