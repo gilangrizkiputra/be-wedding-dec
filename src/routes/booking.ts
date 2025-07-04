@@ -26,7 +26,7 @@ export default (app: Application) => {
   );
 
   router.get(
-    "admin/booking",
+    "/admin/booking",
     authMiddleware.isAuthorized,
     authMiddleware.isAdmin,
     controller.getAllBookings
