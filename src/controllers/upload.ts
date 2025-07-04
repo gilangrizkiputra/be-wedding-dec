@@ -32,7 +32,7 @@ export async function uploadImage(req: Request, res: Response) {
     throw new HttpError(`Upload failed: ${error.message}`, 500);
   }
 
-  const url = `${appEnv.SUPABASE_URL}/storage/v1/object/public/uploads/${path}`;
+  const url = `${appEnv.SUPABASE_URL}/storage/v1/object/public/wdstorage/${path}`;
 
   res.status(200).json({
     message: "Upload success",
