@@ -45,3 +45,12 @@ export async function getAllBookings(req: Request, res: Response) {
   const data = await bookingService.getAllBookings();
   res.status(200).json({ data });
 }
+
+export async function deleteBooking(req: Request, res: Response) {
+  const bookingId = req.params.id;
+  const deleted = await bookingService.deleteBooking(bookingId);
+  res.status(200).json({
+    message: "Booking berhasil dihapus.",
+    data: deleted,
+  });
+}

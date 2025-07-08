@@ -222,3 +222,17 @@ export async function getAllBookings() {
 
   return res.rows;
 }
+
+export async function deleteBooking(bookingId: string) {
+  await query(`DELETE FROM payments WHERE booking_id = $1`, [bookingId]);
+
+  await query(`DELETE FROM booking_additional_services WHERE booking_id = $1`, [
+    bookingId,
+  ]);
+
+  const res = await query(`DELETE FROM bookings WHERE id = $1 RETURNING *`, [
+    bookingId,
+  ]);
+
+  return res.rows[0];
+}

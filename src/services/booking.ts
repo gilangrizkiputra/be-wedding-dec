@@ -121,3 +121,16 @@ export async function getAllBookings() {
     total_price: parseInt(b.total_price, 10),
   }));
 }
+
+export async function deleteBooking(bookingId: string) {
+  const booking = await modelBooking.getBookingDetailById(bookingId);
+  if (!booking) throw new HttpError("Booking tidak ditemukan", 404);
+
+  // const paid = await modelBooking.getPaidPaymentTypes(bookingId);
+  // if (paid.length > 0) {
+  //   throw new HttpError("Tidak bisa hapus booking yang sudah dibayar", 400);
+  // }
+
+  const deleted = await modelBooking.deleteBooking(bookingId);
+  return deleted;
+}

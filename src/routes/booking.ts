@@ -38,4 +38,11 @@ export default (app: Application) => {
     authMiddleware.isAdmin,
     controller.cancelBooking
   );
+
+  router.delete(
+    "/admin/booking/:id",
+    authMiddleware.isAuthorized,
+    authMiddleware.isAdmin,
+    controller.deleteBooking
+  );
 };
