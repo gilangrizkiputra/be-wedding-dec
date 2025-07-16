@@ -120,11 +120,45 @@ export async function cancelBooking(bookingId: string) {
 export async function getAllBookings() {
   const bookings = await modelBooking.getAllBookings();
 
-  return bookings.map((b) => ({
-    ...b,
-    addons_total: parseInt(b.addons_total, 10),
-    total_price: parseInt(b.total_price, 10),
-  }));
+  const enriched = await Promise.all(
+    bookings.map(async (b) => {
+      const base = parseInt(b.decoration.base_price, 10);
+      const addons = parseInt(b.addons_total || "0", 10);
+      const total = base + addons;
+
+      let dp = 0;
+
+      if (b.status === "dp_paid") {
+        dp = await modelBooking.getPaidPaymentAmount(b.id, "dp");
+      } else if (b.status === "first_paid") {
+        dp = await modelBooking.getPaidPaymentAmount(b.id, "first");
+      }
+
+      let payment_summary = "-";
+      const sisa = Math.max(total - dp, 0);
+
+      if (b.status === "dp_paid") {
+        payment_summary = `DP: Rp ${dp.toLocaleString(
+          "id-ID"
+        )} (Sisa: Rp ${sisa.toLocaleString("id-ID")})`;
+      } else if (b.status === "first_paid") {
+        payment_summary = `First Payment: Rp ${dp.toLocaleString(
+          "id-ID"
+        )} (Sisa: Rp ${sisa.toLocaleString("id-ID")})`;
+      } else if (b.status === "done") {
+        payment_summary = `Lunas: Rp ${total.toLocaleString("id-ID")}`;
+      }
+
+      return {
+        ...b,
+        addons_total: addons,
+        total_price: total,
+        payment_summary,
+      };
+    })
+  );
+
+  return enriched;
 }
 
 export async function deleteBooking(bookingId: string) {

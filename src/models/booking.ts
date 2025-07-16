@@ -293,3 +293,15 @@ export async function getFullBookingDetailById(bookingId: string) {
     payments: paymentsRes.rows,
   };
 }
+
+export async function getPaidPaymentAmount(
+  bookingId: string,
+  type: "dp" | "first" | "final"
+) {
+  const res = await query(
+    `SELECT amount FROM payments WHERE booking_id = $1 AND type = $2 AND payment_status = 'paid' LIMIT 1`,
+    [bookingId, type]
+  );
+
+  return res.rows[0]?.amount || 0;
+}
