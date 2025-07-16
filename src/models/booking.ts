@@ -78,7 +78,8 @@ export async function getBookingDetailById(id: string) {
       ) AS user,
       json_build_object(
         'title', d.title,
-        'base_price', d.base_price
+        'base_price', d.base_price,
+        'category', d.category
       ) AS decoration
     FROM bookings b
     JOIN users u ON u.id = b.user_id

@@ -1,5 +1,6 @@
 import * as modelBooking from "../models/booking";
 import * as helpers from "../utils/helper";
+import { generateWhatsAppLink } from "../utils/wa";
 import { HttpError } from "../utils/error";
 
 export async function create(
@@ -34,7 +35,11 @@ export async function create(
 
   const booking = await modelBooking.createBooking(userId, decorationId, date);
   await modelBooking.addAdditionalServices(booking.id, services);
-  return booking;
+
+  const detail = await getDetailBooking(booking.id);
+  const whatsappLink = generateWhatsAppLink(detail);
+
+  return { ...booking, whatsapp_link: whatsappLink };
 }
 
 export async function getUserBookings(userId: string) {

@@ -1,31 +1,42 @@
-// utils/whatsapp.ts
-import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
-const ADMIN_PHONE = process.env.ADMIN_PHONE;
-const WABLAS_URL =
-  process.env.WABLAS_URL || "https://console.wablas.com/api/send-message";
-const WABLAS_TOKEN = process.env.WABLAS_TOKEN || "your-wablas-token";
+export function generateWhatsAppLink(detail: any): string {
+  const phone = process.env.ADMIN_PHONE_NUMBER;
+  if (!phone) throw new Error("ADMIN_PHONE_NUMBER is not set in env");
 
-export async function sendWhatsAppMessage(message: string) {
-  try {
-    await axios.post(
-      WABLAS_URL,
-      {
-        phone: ADMIN_PHONE,
-        message,
-      },
-      {
-        headers: {
-          Authorization: WABLAS_TOKEN,
-        },
-      }
-    );
-  } catch (error: any) {
-    console.error("Gagal kirim pesan WhatsApp:");
-    if (error.response) {
-      console.error(error.response.data);
-    } else {
-      console.error(error.message || error);
-    }
+  const dateStr = new Date(detail.date).toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  let addonsText = "- Tidak ada";
+  if (detail.additional_services?.length) {
+    addonsText = detail.additional_services
+      .map(
+        (a: any) =>
+          `- ${a.name} (${a.quantity} ${a.unit} x Rp${a.price.toLocaleString(
+            "id-ID"
+          )})`
+      )
+      .join("\n");
   }
+
+  const message = `
+Halo Ka, Saya sudah melakukan Booking ${
+    detail.decoration.category
+  } pada Web ChizDecor
+
+Nama: ${detail.user.name}
+Tanggal Acara: ${dateStr}
+Paket: ${detail.decoration.title}
+Estimasi Total: Rp ${detail.total_price.toLocaleString("id-ID")}
+Status: ${detail.status.toUpperCase()}
+
+Additional Services:
+${addonsText}
+  `.trim();
+
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
