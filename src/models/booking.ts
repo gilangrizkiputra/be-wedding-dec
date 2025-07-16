@@ -236,3 +236,59 @@ export async function deleteBooking(bookingId: string) {
 
   return res.rows[0];
 }
+
+export async function getFullBookingDetailById(bookingId: string) {
+  const bookingRes = await query(
+    `
+    SELECT 
+      b.id, b.date, b.status, b.created_at,
+      b.dp_amount, b.full_amount,
+      json_build_object(
+        'id', u.id,
+        'name', u.name,
+        'phone_number', u.phone_number,
+        'email', u.email
+      ) AS user,
+      json_build_object(
+        'id', d.id,
+        'title', d.title,
+        'category', d.category,
+        'base_price', d.base_price
+      ) AS decoration
+    FROM bookings b
+    JOIN users u ON u.id = b.user_id
+    JOIN decorations d ON d.id = b.decoration_id
+    WHERE b.id = $1
+  `,
+    [bookingId]
+  );
+
+  const booking = bookingRes.rows[0];
+  if (!booking) return null;
+
+  const addonsRes = await query(
+    `
+    SELECT s.id, s.name, s.unit, s.price, bas.quantity
+    FROM booking_additional_services bas
+    JOIN additional_services s ON s.id = bas.additional_service_id
+    WHERE bas.booking_id = $1
+  `,
+    [bookingId]
+  );
+
+  const paymentsRes = await query(
+    `
+    SELECT type, amount, payment_status, created_at
+    FROM payments
+    WHERE booking_id = $1
+    ORDER BY created_at ASC
+  `,
+    [bookingId]
+  );
+
+  return {
+    ...booking,
+    additional_services: addonsRes.rows,
+    payments: paymentsRes.rows,
+  };
+}
