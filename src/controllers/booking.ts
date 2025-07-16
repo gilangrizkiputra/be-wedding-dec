@@ -57,6 +57,6 @@ export async function deleteBooking(req: Request, res: Response) {
 
 export async function getAdminDetailBooking(req: Request, res: Response) {
   const { id } = req.params;
-  const data = await bookingService.getAdminDetailBooking(id);
+  const data = await bookingService.getDetailBooking(id);
   res.status(200).json({ data });
 }

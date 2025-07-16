@@ -173,22 +173,3 @@ export async function deleteBooking(bookingId: string) {
   const deleted = await modelBooking.deleteBooking(bookingId);
   return deleted;
 }
-
-export async function getAdminDetailBooking(bookingId: string) {
-  const detail = await modelBooking.getFullBookingDetailById(bookingId);
-  if (!detail) throw new HttpError("Booking tidak ditemukan", 404);
-
-  const addonsTotal: number = detail.additional_services.reduce(
-    (sum: number, s: { price: number; quantity: number }) =>
-      sum + s.price * s.quantity,
-    0
-  );
-
-  const totalPrice = detail.decoration.base_price + addonsTotal;
-
-  return {
-    ...detail,
-    addons_total: addonsTotal,
-    total_price: totalPrice,
-  };
-}
